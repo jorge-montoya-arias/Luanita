@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>BP · Luanita Pro</title>
+    <title>Seguimiento· Luanita</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
@@ -359,7 +359,7 @@
 <body>
     <div class="app-container">
         <div class="header-card">
-            <h1>❤️ Luanita · PA</h1>
+            <h1>❤️ Luanita</h1>
             <p style="opacity:0.8;">Última Semana · Alejandro · Luana · Mia · Lucas</p>
         </div>
 
@@ -367,7 +367,7 @@
             <div class="stat-item"><div class="stat-label">Totales</div><div class="stat-value" id="totalMeasurements">0</div></div>
             <div class="stat-item"><div class="stat-label">Sistólica Ø</div><div class="stat-value" id="avgSystolic">0</div></div>
             <div class="stat-item"><div class="stat-label">Diastólica Ø</div><div class="stat-value" id="avgDiastolic">0</div></div>
-            <div class="stat-item"><div class="stat-label">Alertas OMS</div><div class="stat-value danger" id="highCount">0</div></div>
+            <div class="stat-item"><div class="stat-label">Alertas</div><div class="stat-value danger" id="highCount">0</div></div>
         </div>
 
         <div class="chart-container">
@@ -582,7 +582,7 @@
                 document.getElementById('notes').value = '';
                 renderTable();
                 refreshUI();
-                if (storage.isHigh(sis, dia)) alert('🔴 Alerta OMS: Presión Elevada');
+                if (storage.isHigh(sis, dia)) alert('🔴 Alerta: Presión Elevada');
             };
 
             window.deleteReading = function(id) {
@@ -612,7 +612,7 @@
 
                 const sorted = [...readings].sort((a,b)=> new Date(a.timestamp)-new Date(b.timestamp));
                 const wbData = [
-                    ['Fecha', 'Hora', 'Sistólica', 'Diastólica', 'Notas', 'Estado OMS']
+                    ['Fecha', 'Hora', 'Sistólica', 'Diastólica', 'Notas', 'Estado']
                 ];
 
                 sorted.forEach(r => {
