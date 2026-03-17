@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Profesional de Control de Presión Arterial</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --danger-hover: #c0392b;
+            --light-bg: #ecf0f1;
+            --dark-text: #2c3e50;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .form-section {
+            background: var(--light-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .form-title {
+            color: var(--dark-text);
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            font-weight: 500;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark-text);
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-hover);
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: var(--secondary-color);
+            color: white;
+            padding: 15px;
+            font-weight: 500;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .status-normal {
+            background: #d4edda;
+            color: #155724;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-high {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .delete-btn {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: background 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: var(--danger-hover);
+        }
+
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: var(--dark-text);
+            font-size: 0.95em;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .stat-card .value.danger {
+            color: var(--danger-color);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-content h3 {
+            color: var(--dark-text);
+            margin-bottom: 15px;
+        }
+
+        .modal-content p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Control de Presión Arterial</h1>
+            <p>Sistema de monitoreo Luanita.</p>
+        </div>
+
+        <div class="main-content">
+            <div class="stats-section" id="statsSection">
+                <div class="stat-card">
+                    <h3>Total de Mediciones</h3>
+                    <div class="value" id="totalMeasurements">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Presión Sistólica Promedio</h3>
+                    <div class="value" id="avgSystolic">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Presión Diastólica Promedio</h3>
+                    <div class="value" id="avgDiastolic">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Mediciones Altas (OMS)</h3>
+                    <div class="value danger" id="highCount">0</div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="form-title">➕ Nueva Medición</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="systolic">Presión Sistólica (mmHg)</label>
+                        <input type="number" id="systolic" placeholder="Ej: 120" min="70" max="250" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="diastolic">Presión Diastólica (mmHg)</label>
+                        <input type="number" id="diastolic" placeholder="Ej: 80" min="40" max="150" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="notes">Notas (opcional)</label>
+                        <input type="text" id="notes" placeholder="Ej: Después de ejercicio">
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <button class="btn btn-primary" onclick="addReading()" style="width: 100%;">Registrar Medición</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha y Hora</th>
+                            <th>Sistólica (mmHg)</th>
+                            <th>Diastólica (mmHg)</th>
+                            <th>Estado OMS</th>
+                            <th>Notas</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="readingsTable">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <h3>⚠️ Confirmar Eliminación</h3>
+            <p>¿Estás seguro de que deseas eliminar este registro? Esta acción no se puede deshacer.</p>
+            <div class="modal-buttons">
+                <button class="btn btn-danger" onclick="confirmDelete()">Eliminar</button>
+                <button class="btn btn-primary" onclick="closeModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Clase para manejar el almacenamiento
+        class BloodPressureStorage {
+            constructor() {
+                this.STORAGE_KEY = 'bloodPressureReadings';
+                this.readings = this.loadReadings();
+            }
+
+            loadReadings() {
+                const stored = localStorage.getItem(this.STORAGE_KEY);
+                return stored ? JSON.parse(stored) : [];
+            }
+
+            saveReadings() {
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.readings));
+            }
+
+            addReading(reading) {
+                this.readings.push(reading);
+                this.saveReadings();
+                return reading;
+            }
+
+            deleteReading(id) {
+                const index = this.readings.findIndex(r => r.id === id);
+                if (index !== -1) {
+                    this.readings.splice(index, 1);
+                    this.saveReadings();
+                    return true;
+                }
+                return false;
+            }
+
+            getAllReadings() {
+                return this.readings;
+            }
+
+            getStats() {
+                const readings = this.readings;
+                const total = readings.length;
+                
+                if (total === 0) {
+                    return {
+                        total: 0,
+                        avgSystolic: 0,
+                        avgDiastolic: 0,
+                        highCount: 0
+                    };
+                }
+
+                const sumSystolic = readings.reduce((acc, r) => acc + r.systolic, 0);
+                const sumDiastolic = readings.reduce((acc, r) => acc + r.diastolic, 0);
+                const highCount = readings.filter(r => this.isHighReading(r.systolic, r.diastolic)).length;
+
+                return {
+                    total,
+                    avgSystolic: Math.round(sumSystolic / total),
+                    avgDiastolic: Math.round(sumDiastolic / total),
+                    highCount
+                };
+            }
+
+            isHighReading(systolic, diastolic) {
+                // Criterios OMS: presión alta si sistólica >= 140 o diastólica >= 90
+                return systolic >= 140 || diastolic >= 90;
+            }
+
+            getReadingStatus(systolic, diastolic) {
+                if (this.isHighReading(systolic, diastolic)) {
+                    return {
+                        text: 'ALTA',
+                        class: 'status-high'
+                    };
+                }
+                return {
+                    text: 'Normal',
+                    class: 'status-normal'
+                };
+            }
+        }
+
+        // Inicializar almacenamiento
+        const storage = new BloodPressureStorage();
+        let currentDeleteId = null;
+
+        // Función para formatear fecha
+        function formatDateTime(date) {
+            const d = new Date(date);
+            return d.toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        // Función para agregar lectura
+        function addReading() {
+            const systolic = parseInt(document.getElementById('systolic').value);
+            const diastolic = parseInt(document.getElementById('diastolic').value);
+            const notes = document.getElementById('notes').value;
+
+            if (isNaN(systolic) || isNaN(diastolic)) {
+                alert('Por favor, ingresa valores válidos para la presión arterial.');
+                return;
+            }
+
+            if (systolic < 70 || systolic > 250 || diastolic < 40 || diastolic > 150) {
+                alert('Los valores ingresados están fuera del rango normal. Por favor, verifica.');
+                return;
+            }
+
+            const reading = {
+                id: Date.now().toString(),
+                systolic,
+                diastolic,
+                notes: notes || 'Sin notas',
+                timestamp: new Date().toISOString()
+            };
+
+            storage.addReading(reading);
+            
+            // Limpiar formulario
+            document.getElementById('systolic').value = '';
+            document.getElementById('diastolic').value = '';
+            document.getElementById('notes').value = '';
+
+            // Actualizar UI
+            renderTable();
+            updateStats();
+
+            // Alerta si el valor es alto
+            if (storage.isHighReading(systolic, diastolic)) {
+                alert('⚠️ ALERTA: Esta medición indica presión arterial alta según los estándares de la OMS.');
+            }
+        }
+
+        // Función para eliminar lectura
+        function deleteReading(id) {
+            currentDeleteId = id;
+            document.getElementById('confirmModal').classList.add('active');
+        }
+
+        // Función para confirmar eliminación
+        function confirmDelete() {
+            if (currentDeleteId) {
+                storage.deleteReading(currentDeleteId);
+                renderTable();
+                updateStats();
+                closeModal();
+            }
+        }
+
+        // Función para cerrar modal
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('active');
+            currentDeleteId = null;
+        }
+
+        // Función para renderizar la tabla
+        function renderTable() {
+            const readings = storage.getAllReadings();
+            const tbody = document.getElementById('readingsTable');
+            
+            if (readings.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 30px;">
+                            No hay mediciones registradas. ¡Agrega tu primera medición!
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Ordenar por fecha descendente (más recientes primero)
+            const sortedReadings = readings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            tbody.innerHTML = sortedReadings.map(reading => {
+                const status = storage.getReadingStatus(reading.systolic, reading.diastolic);
+                return `
+                    <tr>
+                        <td>${formatDateTime(reading.timestamp)}</td>
+                        <td><strong>${reading.systolic}</strong></td>
+                        <td><strong>${reading.diastolic}</strong></td>
+                        <td><span class="${status.class}">${status.text}</span></td>
+                        <td>${reading.notes}</td>
+                        <td>
+                            <button class="delete-btn" onclick="deleteReading('${reading.id}')">
+                                🗑️ Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Función para actualizar estadísticas
+        function updateStats() {
+            const stats = storage.getStats();
+            
+            document.getElementById('totalMeasurements').textContent = stats.total;
+            document.getElementById('avgSystolic').textContent = stats.avgSystolic;
+            document.getElementById('avgDiastolic').textContent = stats.avgDiastolic;
+            document.getElementById('highCount').textContent = stats.highCount;
+        }
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('confirmModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTable();
+            updateStats();
+        });
+
+        // Permitir agregar con Enter
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addReading();
+            }
+        });
+    </script>
+</body>
+</html>
