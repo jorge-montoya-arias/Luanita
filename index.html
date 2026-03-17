@@ -250,15 +250,24 @@
         }
 
         .date-cell {
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 1rem;
             line-height: 1.3;
             white-space: nowrap;
         }
 
-        .date-small {
-            font-size: 0.75rem;
-            color: #4b5a6e;
+        .year-small {
+            font-size: 0.7rem;
+            color: #64748b;
+            font-weight: 400;
             display: block;
+            margin-top: 2px;
+        }
+
+        .time-cell {
+            font-weight: 500;
+            color: #1e293b;
+            font-size: 0.95rem;
         }
 
         .status-badge {
@@ -350,24 +359,24 @@
 <body>
     <div class="app-container">
         <div class="header-card">
-            <h1>❤️ Luanita · </h1>
+            <h1>❤️ Luanita · PA</h1>
             <p style="opacity:0.8;">Última Semana · Alejandro · Luana · Mia · Lucas</p>
         </div>
 
         <div class="stats-grid">
-            <div class="stat-item"><div class="stat-label">totales</div><div class="stat-value" id="totalMeasurements">0</div></div>
-            <div class="stat-item"><div class="stat-label">sistólica Ø</div><div class="stat-value" id="avgSystolic">0</div></div>
-            <div class="stat-item"><div class="stat-label">diastólica Ø</div><div class="stat-value" id="avgDiastolic">0</div></div>
-            <div class="stat-item"><div class="stat-label">alertas OMS</div><div class="stat-value danger" id="highCount">0</div></div>
+            <div class="stat-item"><div class="stat-label">Totales</div><div class="stat-value" id="totalMeasurements">0</div></div>
+            <div class="stat-item"><div class="stat-label">Sistólica Ø</div><div class="stat-value" id="avgSystolic">0</div></div>
+            <div class="stat-item"><div class="stat-label">Diastólica Ø</div><div class="stat-value" id="avgDiastolic">0</div></div>
+            <div class="stat-item"><div class="stat-label">Alertas OMS</div><div class="stat-value danger" id="highCount">0</div></div>
         </div>
 
         <div class="chart-container">
-            <div class="chart-title">📈 Evolución semanal (sistólica)</div>
+            <div class="chart-title">📈 Evolución Semanal (Sistólica)</div>
             <canvas id="bpChart"></canvas>
         </div>
 
         <div class="form-card card">
-            <div class="form-title">➕ Nueva medición</div>
+            <div class="form-title">➕ Nueva Medición</div>
             <div class="double-input">
                 <div class="input-group">
                     <label class="input-label">Sistólica</label>
@@ -380,7 +389,7 @@
             </div>
             <div class="input-group">
                 <label class="input-label">Nota</label>
-                <input type="text" id="notes" class="input-field" placeholder="ej: reposo, tarde" autocomplete="off">
+                <input type="text" id="notes" class="input-field" placeholder="Ej: Reposo, Tarde" autocomplete="off">
             </div>
             <button class="btn btn-primary" onclick="addReading()">Guardar</button>
             <button class="btn btn-excel" onclick="exportToExcel()"><span class="btn-icon">📥</span> Descargar Historial (Excel)</button>
@@ -389,8 +398,8 @@
         <div class="table-container">
             <div class="table-scroll">
                 <table>
-                    <thead><tr><th>fecha</th><th>hora</th><th>sis</th><th>dia</th><th>estado</th><th></th></tr></thead>
-                    <tbody id="readingsTable"><tr><td colspan="6" style="padding:40px;text-align:center;color:#8a9bb5;">✨ sin mediciones</td></tr></tbody>
+                    <thead><tr><th>Fecha</th><th>Hora</th><th>Sis</th><th>Dia</th><th>Estado</th><th></th></tr></thead>
+                    <tbody id="readingsTable"><tr><td colspan="6" style="padding:40px;text-align:center;color:#8a9bb5;">✨ Sin Mediciones</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -399,18 +408,17 @@
     <div class="modal-overlay" id="confirmModal">
         <div class="modal-content">
             <h3 style="font-size:2.5rem;">🗑️</h3>
-            <p style="font-size:1.2rem;">¿eliminar registro?<br><span style="font-size:0.9rem; color:#b33;">no se recupera</span></p>
+            <p style="font-size:1.2rem;">¿Eliminar registro?<br><span style="font-size:0.9rem; color:#b33;">No se recupera</span></p>
             <div class="modal-buttons">
-                <button class="modal-btn" onclick="closeModal()">cancelar</button>
-                <button class="modal-btn modal-btn-danger" onclick="confirmDelete()">eliminar</button>
+                <button class="modal-btn" onclick="closeModal()">Cancelar</button>
+                <button class="modal-btn modal-btn-danger" onclick="confirmDelete()">Eliminar</button>
             </div>
         </div>
     </div>
 
     <script>
         (function() {
-            // ----- almacenamiento profesional (infinito mientras no se borre manual) -----
-            const STORAGE_KEY = 'bp_luanita_pro_v2';
+            const STORAGE_KEY = 'bp_luanita_pro_v3';
 
             class BPStorage {
                 constructor() {
@@ -467,33 +475,41 @@
             const modal = document.getElementById('confirmModal');
             let chartInstance = null;
 
-            // formato fecha + hora (dos líneas)
-            window.formatDateHour = function(iso) {
+            window.formatDate = function(iso) {
                 try {
                     const d = new Date(iso);
-                    const fecha = d.toLocaleDateString('es-ES', { day:'2-digit', month:'2-digit' });
-                    const hora = d.toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit', hour12: false });
-                    return `<span class="date-cell">${fecha}</span><span class="date-small">${hora}</span>`;
+                    const dia = d.getDate().toString().padStart(2,'0');
+                    const mes = (d.getMonth()+1).toString().padStart(2,'0');
+                    const anio = d.getFullYear();
+                    return `<span class="date-cell">${dia}/${mes}</span><span class="year-small">${anio}</span>`;
                 } catch {
-                    return '<span>--</span><span class="date-small">--:--</span>';
+                    return '<span class="date-cell">--/--</span><span class="year-small">----</span>';
                 }
             };
 
-            // render tabla
+            window.formatTime = function(iso) {
+                try {
+                    const d = new Date(iso);
+                    return d.toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit', hour12: false });
+                } catch {
+                    return '--:--';
+                }
+            };
+
             function renderTable() {
                 const list = storage.getAll();
                 const tbody = document.getElementById('readingsTable');
                 if (!list.length) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="padding:40px;text-align:center;color:#8a9bb5;">✨ sin mediciones</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="6" style="padding:40px;text-align:center;color:#8a9bb5;">✨ Sin Mediciones</td></tr>';
                     return;
                 }
                 const sorted = [...list].sort((a,b)=> new Date(b.timestamp) - new Date(a.timestamp));
                 tbody.innerHTML = sorted.map(r => {
                     const statusClass = storage.isHigh(r.systolic, r.diastolic) ? 'status-high' : 'status-normal';
-                    const statusText = storage.isHigh(r.systolic, r.diastolic) ? 'ALTA' : 'normal';
+                    const statusText = storage.isHigh(r.systolic, r.diastolic) ? 'ALTA' : 'Normal';
                     return `<tr>
-                        <td>${window.formatDateHour(r.timestamp)}</td>
-                        <td style="font-size:0.9rem;">—</td>
+                        <td>${window.formatDate(r.timestamp)}</td>
+                        <td class="time-cell">${window.formatTime(r.timestamp)}</td>
                         <td><strong>${r.systolic}</strong></td>
                         <td><strong>${r.diastolic}</strong></td>
                         <td><span class="status-badge ${statusClass}">${statusText}</span></td>
@@ -502,7 +518,6 @@
                 }).join('');
             }
 
-            // actualizar stats y gráfico
             function refreshUI() {
                 const stats = storage.getStats();
                 document.getElementById('totalMeasurements').innerText = stats.total;
@@ -510,7 +525,6 @@
                 document.getElementById('avgDiastolic').innerText = stats.avgD;
                 document.getElementById('highCount').innerText = stats.high;
 
-                // gráfico semanal (sistólica)
                 const weekData = storage.getWeekReadings();
                 const labels = weekData.map(d => {
                     const date = new Date(d.timestamp);
@@ -526,7 +540,7 @@
                     data: {
                         labels: labels,
                         datasets: [{
-                            label: 'sistólica (mmHg)',
+                            label: 'Sistólica (mmHg)',
                             data: values,
                             borderColor: '#2563eb',
                             backgroundColor: 'rgba(37,99,235,0.05)',
@@ -552,8 +566,8 @@
                 const dia = parseInt(document.getElementById('diastolic').value);
                 const notes = document.getElementById('notes').value.trim() || '—';
 
-                if (isNaN(sis) || isNaN(dia)) { alert('ingresa valores'); return; }
-                if (sis<70||sis>250||dia<40||dia>150) { alert('rango válido: sis 70-250, dia 40-150'); return; }
+                if (isNaN(sis) || isNaN(dia)) { alert('Ingresa valores válidos'); return; }
+                if (sis<70||sis>250||dia<40||dia>150) { alert('Rango válido: Sis 70-250, Dia 40-150'); return; }
 
                 const reading = {
                     id: Date.now().toString(),
@@ -568,7 +582,7 @@
                 document.getElementById('notes').value = '';
                 renderTable();
                 refreshUI();
-                if (storage.isHigh(sis, dia)) alert('🔴 alerta OMS: presión elevada');
+                if (storage.isHigh(sis, dia)) alert('🔴 Alerta OMS: Presión Elevada');
             };
 
             window.deleteReading = function(id) {
@@ -592,28 +606,39 @@
 
             modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
-            // exportar a excel (formato tabla completa)
             window.exportToExcel = function() {
                 const readings = storage.getAll();
-                if (!readings.length) { alert('no hay datos para exportar'); return; }
+                if (!readings.length) { alert('No hay datos para exportar'); return; }
 
                 const sorted = [...readings].sort((a,b)=> new Date(a.timestamp)-new Date(b.timestamp));
-                let csv = "Fecha,Hora,Sistólica,Diastólica,Notas,Estado OMS\n";
+                const wbData = [
+                    ['Fecha', 'Hora', 'Sistólica', 'Diastólica', 'Notas', 'Estado OMS']
+                ];
 
                 sorted.forEach(r => {
                     const d = new Date(r.timestamp);
                     const fecha = d.toLocaleDateString('es-ES');
                     const hora = d.toLocaleTimeString('es-ES', { hour12: false });
-                    const estado = (r.systolic >= 140 || r.diastolic >= 90) ? 'ALTA' : 'normal';
-                    const nota = r.notes.replace(/,/g, ';'); // evitar conflictos csv
-                    csv += `${fecha},${hora},${r.systolic},${r.diastolic},"${nota}",${estado}\n`;
+                    const estado = (r.systolic >= 140 || r.diastolic >= 90) ? 'ALTA' : 'Normal';
+                    const nota = r.notes;
+                    wbData.push([fecha, hora, r.systolic, r.diastolic, nota, estado]);
                 });
 
-                const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' }); // BOM para español
+                let csv = '';
+                wbData.forEach(row => {
+                    csv += row.map(cell => {
+                        if (typeof cell === 'string' && (cell.includes(',') || cell.includes('"'))) {
+                            return `"${cell.replace(/"/g, '""')}"`;
+                        }
+                        return cell;
+                    }).join(',') + '\n';
+                });
+
+                const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement('a');
                 const url = URL.createObjectURL(blob);
                 link.setAttribute('href', url);
-                link.setAttribute('download', 'presion_luanita_completa.csv');
+                link.setAttribute('download', 'Presion_Luanita_Historial.csv');
                 link.style.display = 'none';
                 document.body.appendChild(link);
                 link.click();
