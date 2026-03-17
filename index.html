@@ -2,609 +2,623 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Profesional de Control de Presión Arterial</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Presión Arterial · Luanita</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #34495e;
-            --accent-color: #3498db;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --danger-color: #e74c3c;
-            --danger-hover: #c0392b;
-            --light-bg: #ecf0f1;
-            --dark-text: #2c3e50;
-            --border-radius: 8px;
-            --box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            -webkit-tap-highlight-color: transparent;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f0f2f5;
             min-height: 100vh;
-            padding: 20px;
+            padding: 12px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
         }
 
-        .container {
-            max-width: 1200px;
+        .app-container {
+            width: 100%;
+            max-width: 480px;
             margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card {
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            overflow: hidden;
+            border-radius: 28px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,20,40,0.05);
+            padding: 20px 18px;
+            border: 1px solid rgba(0,0,0,0.02);
+            backdrop-filter: blur(2px);
+            transition: all 0.2s ease;
         }
 
-        .header {
-            background: var(--primary-color);
+        .header-card {
+            background: linear-gradient(145deg, #1a2e3f, #1f3a4b);
             color: white;
-            padding: 30px;
+            padding: 24px 20px;
+            border-radius: 32px;
+        }
+
+        .header-card h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-card p {
+            font-size: 1rem;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 4px;
+        }
+
+        .stat-item {
+            background: white;
+            border-radius: 24px;
+            padding: 18px 12px;
             text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.02);
         }
 
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            font-weight: 300;
+        .stat-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #64748b;
+            font-weight: 500;
+            margin-bottom: 8px;
         }
 
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
+        .stat-value {
+            font-size: 2.1rem;
+            font-weight: 700;
+            color: #0b1e2c;
+            line-height: 1;
         }
 
-        .main-content {
-            padding: 30px;
+        .stat-value.danger {
+            color: #c2414a;
         }
 
-        .form-section {
-            background: var(--light-bg);
-            padding: 25px;
-            border-radius: var(--border-radius);
-            margin-bottom: 30px;
-            box-shadow: var(--box-shadow);
+        .stat-value.neutral {
+            color: #2563eb;
+        }
+
+        .form-card {
+            background: white;
         }
 
         .form-title {
-            color: var(--dark-text);
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: #0b1e2c;
             margin-bottom: 20px;
-            font-size: 1.5em;
-            font-weight: 500;
-        }
-
-        .form-row {
             display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
         }
 
-        .form-group {
-            flex: 1;
-            min-width: 200px;
+        .input-group {
+            margin-bottom: 16px;
         }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--dark-text);
+        .input-label {
+            font-size: 0.9rem;
             font-weight: 500;
-            font-size: 0.95em;
+            color: #334155;
+            margin-bottom: 6px;
+            display: block;
+            padding-left: 6px;
         }
 
-        input {
+        .input-field {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: var(--border-radius);
-            font-size: 1em;
-            transition: border-color 0.3s ease;
+            padding: 18px 16px;
+            font-size: 1.1rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 24px;
+            background: #f8fafc;
+            transition: border 0.15s, background 0.15s;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
-        input:focus {
+        .input-field:focus {
             outline: none;
-            border-color: var(--accent-color);
+            border-color: #2563eb;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+        }
+
+        .double-input {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
 
         .btn {
-            padding: 12px 25px;
             border: none;
-            border-radius: var(--border-radius);
-            font-size: 1em;
+            border-radius: 32px;
+            padding: 18px 20px;
+            font-size: 1.2rem;
             font-weight: 600;
+            width: 100%;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.15s ease;
+            background: #e2e8f0;
+            color: #1e293b;
+            -webkit-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
         }
 
         .btn-primary {
-            background: var(--accent-color);
+            background: #1e3a5f;
             color: white;
+            box-shadow: 0 8px 20px -8px #1e3a5f80;
         }
 
-        .btn-primary:hover {
-            background: #2980b9;
-            transform: translateY(-2px);
+        .btn-primary:active {
+            background: #143049;
+            transform: scale(0.98);
         }
 
         .btn-danger {
-            background: var(--danger-color);
-            color: white;
+            background: #fee2e2;
+            color: #b91c1c;
+            font-size: 1rem;
+            padding: 14px;
         }
 
-        .btn-danger:hover {
-            background: var(--danger-hover);
-        }
-
-        .btn-warning {
-            background: var(--warning-color);
-            color: white;
-        }
-
-        .btn-warning:hover {
-            background: #e67e22;
+        .btn-danger:active {
+            background: #fecaca;
         }
 
         .table-container {
-            overflow-x: auto;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
+            background: white;
+            border-radius: 28px;
+            padding: 0;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .table-scroll {
+            max-height: 420px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
+            min-width: 360px;
         }
 
         th {
-            background: var(--secondary-color);
-            color: white;
-            padding: 15px;
-            font-weight: 500;
-            text-align: left;
+            background: #f8fafc;
+            color: #334155;
+            font-weight: 600;
+            font-size: 0.8rem;
+            padding: 16px 8px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            background: #f1f4f9;
+            z-index: 10;
         }
 
         td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #ddd;
+            padding: 16px 6px;
+            text-align: center;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 0.95rem;
         }
 
-        tr:hover {
-            background: #f5f5f5;
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            min-width: 68px;
         }
 
         .status-normal {
-            background: #d4edda;
-            color: #155724;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-            display: inline-block;
+            background: #dcfce7;
+            color: #166534;
         }
 
         .status-high {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-            display: inline-block;
+            background: #fee2e2;
+            color: #991b1b;
         }
 
         .delete-btn {
-            background: var(--danger-color);
-            color: white;
+            background: none;
             border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
+            font-size: 1.4rem;
             cursor: pointer;
-            font-size: 0.85em;
-            transition: background 0.3s ease;
+            padding: 8px 6px;
+            border-radius: 100px;
+            width: 44px;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            transition: background 0.1s;
+            touch-action: manipulation;
         }
 
-        .delete-btn:hover {
-            background: var(--danger-hover);
+        .delete-btn:active {
+            background: #e2e8f0;
         }
 
-        .stats-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
+        .empty-row td {
+            padding: 48px 16px;
+            color: #94a3b8;
+            font-size: 1rem;
             text-align: center;
         }
 
-        .stat-card h3 {
-            color: var(--dark-text);
-            font-size: 0.95em;
-            margin-bottom: 10px;
-            font-weight: 500;
-        }
-
-        .stat-card .value {
-            font-size: 2em;
-            font-weight: 700;
-            color: var(--accent-color);
-        }
-
-        .stat-card .value.danger {
-            color: var(--danger-color);
-        }
-
-        .modal {
-            display: none;
+        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
+            backdrop-filter: blur(4px);
+            display: flex;
             align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.2s;
+            padding: 20px;
         }
 
-        .modal.active {
-            display: flex;
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
 
         .modal-content {
             background: white;
-            padding: 30px;
-            border-radius: var(--border-radius);
-            max-width: 400px;
-            width: 90%;
+            border-radius: 36px;
+            padding: 32px 24px;
+            max-width: 380px;
+            width: 100%;
             text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            transform: scale(0.9);
+            transition: 0.2s;
+        }
+
+        .active .modal-content {
+            transform: scale(1);
         }
 
         .modal-content h3 {
-            color: var(--dark-text);
-            margin-bottom: 15px;
+            font-size: 1.8rem;
+            margin-bottom: 16px;
+            color: #1e293b;
         }
 
         .modal-content p {
-            color: #666;
-            margin-bottom: 20px;
+            font-size: 1.2rem;
+            color: #475569;
+            margin-bottom: 28px;
         }
 
         .modal-buttons {
             display: flex;
-            gap: 10px;
-            justify-content: center;
+            gap: 12px;
         }
 
-        @media (max-width: 768px) {
-            .form-row {
-                flex-direction: column;
-            }
-            
-            .header h1 {
-                font-size: 1.8em;
-            }
+        .modal-btn {
+            flex: 1;
+            padding: 16px 10px;
+            border-radius: 34px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: none;
+            background: #f1f5f9;
+            color: #1e293b;
+            touch-action: manipulation;
+        }
+
+        .modal-btn-danger {
+            background: #b91c1c;
+            color: white;
+        }
+
+        .modal-btn-danger:active {
+            background: #991b1b;
+        }
+
+        .modal-btn-cancel:active {
+            background: #e2e8f0;
+        }
+
+        .note-mobile {
+            font-size: 0.9rem;
+            color: #64748b;
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            border: 1px dashed #cbd5e1;
+            text-align: center;
+        }
+
+        .icon-small {
+            font-size: 1.4rem;
+            line-height: 1;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>📊 Control de Presión Arterial</h1>
-            <p>Sistema de monitoreo Luanita.</p>
+    <div class="app-container">
+        <div class="header-card card">
+            <h1>
+                <span>❤️</span> Luanita
+            </h1>
+            <p>Control diario · estándares OMS</p>
         </div>
 
-        <div class="main-content">
-            <div class="stats-section" id="statsSection">
-                <div class="stat-card">
-                    <h3>Total de Mediciones</h3>
-                    <div class="value" id="totalMeasurements">0</div>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-label">mediciones</div>
+                <div class="stat-value neutral" id="totalMeasurements">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">sistólica Ø</div>
+                <div class="stat-value" id="avgSystolic">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">diastólica Ø</div>
+                <div class="stat-value" id="avgDiastolic">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">alertas OMS</div>
+                <div class="stat-value danger" id="highCount">0</div>
+            </div>
+        </div>
+
+        <div class="form-card card">
+            <div class="form-title">
+                <span>➕</span> Registrar toma
+            </div>
+            <div class="double-input">
+                <div class="input-group">
+                    <label class="input-label">Sistólica</label>
+                    <input type="number" id="systolic" class="input-field" placeholder="120" min="70" max="250" inputmode="numeric">
                 </div>
-                <div class="stat-card">
-                    <h3>Presión Sistólica Promedio</h3>
-                    <div class="value" id="avgSystolic">0</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Presión Diastólica Promedio</h3>
-                    <div class="value" id="avgDiastolic">0</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Mediciones Altas (OMS)</h3>
-                    <div class="value danger" id="highCount">0</div>
+                <div class="input-group">
+                    <label class="input-label">Diastólica</label>
+                    <input type="number" id="diastolic" class="input-field" placeholder="80" min="40" max="150" inputmode="numeric">
                 </div>
             </div>
-
-            <div class="form-section">
-                <h2 class="form-title">➕ Nueva Medición</h2>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="systolic">Presión Sistólica (mmHg)</label>
-                        <input type="number" id="systolic" placeholder="Ej: 120" min="70" max="250" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="diastolic">Presión Diastólica (mmHg)</label>
-                        <input type="number" id="diastolic" placeholder="Ej: 80" min="40" max="150" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="notes">Notas (opcional)</label>
-                        <input type="text" id="notes" placeholder="Ej: Después de ejercicio">
-                    </div>
-                    <div class="form-group" style="display: flex; align-items: flex-end;">
-                        <button class="btn btn-primary" onclick="addReading()" style="width: 100%;">Registrar Medición</button>
-                    </div>
-                </div>
+            <div class="input-group">
+                <label class="input-label">Nota (opcional)</label>
+                <input type="text" id="notes" class="input-field" placeholder="ej: reposo, estrés" autocomplete="off">
             </div>
+            <button class="btn btn-primary" onclick="addReading()">Guardar medición</button>
+            <div class="note-mobile">
+                ⏱️ la hora se guarda automáticamente
+            </div>
+        </div>
 
-            <div class="table-container">
+        <div class="table-container">
+            <div class="table-scroll">
                 <table>
                     <thead>
                         <tr>
-                            <th>Fecha y Hora</th>
-                            <th>Sistólica (mmHg)</th>
-                            <th>Diastólica (mmHg)</th>
-                            <th>Estado OMS</th>
-                            <th>Notas</th>
-                            <th>Acciones</th>
+                            <th>hora</th>
+                            <th>sis</th>
+                            <th>dia</th>
+                            <th>estado</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody id="readingsTable">
+                        <tr class="empty-row"><td colspan="5">✨ sin registros aún</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <div class="modal" id="confirmModal">
+    <div class="modal-overlay" id="confirmModal">
         <div class="modal-content">
-            <h3>⚠️ Confirmar Eliminación</h3>
-            <p>¿Estás seguro de que deseas eliminar este registro? Esta acción no se puede deshacer.</p>
+            <h3>🗑️</h3>
+            <p>¿Eliminar este registro?<br><strong>no se podrá recuperar</strong></p>
             <div class="modal-buttons">
-                <button class="btn btn-danger" onclick="confirmDelete()">Eliminar</button>
-                <button class="btn btn-primary" onclick="closeModal()">Cancelar</button>
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="modal-btn modal-btn-danger" onclick="confirmDelete()">Eliminar</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Clase para manejar el almacenamiento
-        class BloodPressureStorage {
-            constructor() {
-                this.STORAGE_KEY = 'bloodPressureReadings';
-                this.readings = this.loadReadings();
-            }
-
-            loadReadings() {
-                const stored = localStorage.getItem(this.STORAGE_KEY);
-                return stored ? JSON.parse(stored) : [];
-            }
-
-            saveReadings() {
-                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.readings));
-            }
-
-            addReading(reading) {
-                this.readings.push(reading);
-                this.saveReadings();
-                return reading;
-            }
-
-            deleteReading(id) {
-                const index = this.readings.findIndex(r => r.id === id);
-                if (index !== -1) {
-                    this.readings.splice(index, 1);
-                    this.saveReadings();
-                    return true;
+        (function(){
+            class BloodPressureStorage {
+                constructor() {
+                    this.STORAGE_KEY = 'bp_luanita';
+                    this.readings = this.load();
                 }
-                return false;
-            }
-
-            getAllReadings() {
-                return this.readings;
-            }
-
-            getStats() {
-                const readings = this.readings;
-                const total = readings.length;
-                
-                if (total === 0) {
+                load() {
+                    try {
+                        return JSON.parse(localStorage.getItem(this.STORAGE_KEY)) || [];
+                    } catch {
+                        return [];
+                    }
+                }
+                save() {
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.readings));
+                }
+                add(r) {
+                    this.readings.push(r);
+                    this.save();
+                    return r;
+                }
+                delete(id) {
+                    const i = this.readings.findIndex(x => x.id === id);
+                    if (i !== -1) { this.readings.splice(i,1); this.save(); return true; }
+                    return false;
+                }
+                getAll() { return this.readings; }
+                stats() {
+                    const r = this.readings;
+                    if (!r.length) return { total:0, avgSystolic:0, avgDiastolic:0, highCount:0 };
+                    let sumSis = 0, sumDia = 0, high = 0;
+                    for (let x of r) {
+                        sumSis += x.systolic;
+                        sumDia += x.diastolic;
+                        if (x.systolic >= 140 || x.diastolic >= 90) high++;
+                    }
                     return {
-                        total: 0,
-                        avgSystolic: 0,
-                        avgDiastolic: 0,
-                        highCount: 0
+                        total: r.length,
+                        avgSystolic: Math.round(sumSis/r.length),
+                        avgDiastolic: Math.round(sumDia/r.length),
+                        highCount: high
                     };
                 }
-
-                const sumSystolic = readings.reduce((acc, r) => acc + r.systolic, 0);
-                const sumDiastolic = readings.reduce((acc, r) => acc + r.diastolic, 0);
-                const highCount = readings.filter(r => this.isHighReading(r.systolic, r.diastolic)).length;
-
-                return {
-                    total,
-                    avgSystolic: Math.round(sumSystolic / total),
-                    avgDiastolic: Math.round(sumDiastolic / total),
-                    highCount
-                };
-            }
-
-            isHighReading(systolic, diastolic) {
-                // Criterios OMS: presión alta si sistólica >= 140 o diastólica >= 90
-                return systolic >= 140 || diastolic >= 90;
-            }
-
-            getReadingStatus(systolic, diastolic) {
-                if (this.isHighReading(systolic, diastolic)) {
-                    return {
-                        text: 'ALTA',
-                        class: 'status-high'
-                    };
+                isHigh(s,d) { return s >= 140 || d >= 90; }
+                status(s,d) {
+                    return this.isHigh(s,d) 
+                        ? { text:'ALTA', class:'status-high' } 
+                        : { text:'normal', class:'status-normal' };
                 }
-                return {
-                    text: 'Normal',
-                    class: 'status-normal'
-                };
-            }
-        }
-
-        // Inicializar almacenamiento
-        const storage = new BloodPressureStorage();
-        let currentDeleteId = null;
-
-        // Función para formatear fecha
-        function formatDateTime(date) {
-            const d = new Date(date);
-            return d.toLocaleDateString('es-ES', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-        }
-
-        // Función para agregar lectura
-        function addReading() {
-            const systolic = parseInt(document.getElementById('systolic').value);
-            const diastolic = parseInt(document.getElementById('diastolic').value);
-            const notes = document.getElementById('notes').value;
-
-            if (isNaN(systolic) || isNaN(diastolic)) {
-                alert('Por favor, ingresa valores válidos para la presión arterial.');
-                return;
             }
 
-            if (systolic < 70 || systolic > 250 || diastolic < 40 || diastolic > 150) {
-                alert('Los valores ingresados están fuera del rango normal. Por favor, verifica.');
-                return;
-            }
+            const storage = new BloodPressureStorage();
+            let currentDeleteId = null;
+            const modal = document.getElementById('confirmModal');
 
-            const reading = {
-                id: Date.now().toString(),
-                systolic,
-                diastolic,
-                notes: notes || 'Sin notas',
-                timestamp: new Date().toISOString()
+            window.formatTime = function(iso) {
+                try {
+                    const d = new Date(iso);
+                    return d.toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit', hour12: false });
+                } catch {
+                    return '--:--';
+                }
             };
 
-            storage.addReading(reading);
-            
-            // Limpiar formulario
-            document.getElementById('systolic').value = '';
-            document.getElementById('diastolic').value = '';
-            document.getElementById('notes').value = '';
+            window.addReading = function() {
+                const sis = parseInt(document.getElementById('systolic').value);
+                const dia = parseInt(document.getElementById('diastolic').value);
+                const notes = document.getElementById('notes').value.trim() || '—';
 
-            // Actualizar UI
-            renderTable();
-            updateStats();
+                if (isNaN(sis) || isNaN(dia)) {
+                    alert('Ingresa ambos valores');
+                    return;
+                }
+                if (sis < 70 || sis > 250 || dia < 40 || dia > 150) {
+                    alert('Valores fuera de rango (70-250 / 40-150)');
+                    return;
+                }
 
-            // Alerta si el valor es alto
-            if (storage.isHighReading(systolic, diastolic)) {
-                alert('⚠️ ALERTA: Esta medición indica presión arterial alta según los estándares de la OMS.');
+                const reading = {
+                    id: Date.now().toString(),
+                    systolic: sis,
+                    diastolic: dia,
+                    notes: notes,
+                    timestamp: new Date().toISOString()
+                };
+
+                storage.add(reading);
+                document.getElementById('systolic').value = '';
+                document.getElementById('diastolic').value = '';
+                document.getElementById('notes').value = '';
+
+                render();
+                if (storage.isHigh(sis, dia)) {
+                    alert('🔴 ALERTA OMS: presión elevada');
+                }
+            };
+
+            window.deleteReading = function(id) {
+                currentDeleteId = id;
+                modal.classList.add('active');
+            };
+
+            window.confirmDelete = function() {
+                if (currentDeleteId) {
+                    storage.delete(currentDeleteId);
+                    render();
+                    closeModal();
+                }
+            };
+
+            window.closeModal = function() {
+                modal.classList.remove('active');
+                currentDeleteId = null;
+            };
+
+            function render() {
+                const list = storage.getAll();
+                const tbody = document.getElementById('readingsTable');
+                if (!list.length) {
+                    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">✨ sin registros aún</td></tr>';
+                } else {
+                    const sorted = [...list].sort((a,b)=> new Date(b.timestamp)-new Date(a.timestamp));
+                    tbody.innerHTML = sorted.map(r => {
+                        const st = storage.status(r.systolic, r.diastolic);
+                        return `<tr>
+                            <td style="font-weight:500;">${formatTime(r.timestamp)}</td>
+                            <td><strong>${r.systolic}</strong></td>
+                            <td><strong>${r.diastolic}</strong></td>
+                            <td><span class="status-badge ${st.class}">${st.text}</span></td>
+                            <td><button class="delete-btn" onclick="deleteReading('${r.id}')">🗑️</button></td>
+                        </tr>`;
+                    }).join('');
+                }
+
+                const s = storage.stats();
+                document.getElementById('totalMeasurements').innerText = s.total;
+                document.getElementById('avgSystolic').innerText = s.avgSystolic;
+                document.getElementById('avgDiastolic').innerText = s.avgDiastolic;
+                document.getElementById('highCount').innerText = s.highCount;
             }
-        }
 
-        // Función para eliminar lectura
-        function deleteReading(id) {
-            currentDeleteId = id;
-            document.getElementById('confirmModal').classList.add('active');
-        }
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
 
-        // Función para confirmar eliminación
-        function confirmDelete() {
-            if (currentDeleteId) {
-                storage.deleteReading(currentDeleteId);
-                renderTable();
-                updateStats();
-                closeModal();
-            }
-        }
-
-        // Función para cerrar modal
-        function closeModal() {
-            document.getElementById('confirmModal').classList.remove('active');
-            currentDeleteId = null;
-        }
-
-        // Función para renderizar la tabla
-        function renderTable() {
-            const readings = storage.getAllReadings();
-            const tbody = document.getElementById('readingsTable');
-            
-            if (readings.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 30px;">
-                            No hay mediciones registradas. ¡Agrega tu primera medición!
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            // Ordenar por fecha descendente (más recientes primero)
-            const sortedReadings = readings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-            tbody.innerHTML = sortedReadings.map(reading => {
-                const status = storage.getReadingStatus(reading.systolic, reading.diastolic);
-                return `
-                    <tr>
-                        <td>${formatDateTime(reading.timestamp)}</td>
-                        <td><strong>${reading.systolic}</strong></td>
-                        <td><strong>${reading.diastolic}</strong></td>
-                        <td><span class="${status.class}">${status.text}</span></td>
-                        <td>${reading.notes}</td>
-                        <td>
-                            <button class="delete-btn" onclick="deleteReading('${reading.id}')">
-                                🗑️ Eliminar
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        // Función para actualizar estadísticas
-        function updateStats() {
-            const stats = storage.getStats();
-            
-            document.getElementById('totalMeasurements').textContent = stats.total;
-            document.getElementById('avgSystolic').textContent = stats.avgSystolic;
-            document.getElementById('avgDiastolic').textContent = stats.avgDiastolic;
-            document.getElementById('highCount').textContent = stats.highCount;
-        }
-
-        // Cerrar modal al hacer clic fuera
-        window.onclick = function(event) {
-            const modal = document.getElementById('confirmModal');
-            if (event.target === modal) {
-                closeModal();
-            }
-        };
-
-        // Inicializar la aplicación
-        document.addEventListener('DOMContentLoaded', () => {
-            renderTable();
-            updateStats();
-        });
-
-        // Permitir agregar con Enter
-        document.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                addReading();
-            }
-        });
+            document.addEventListener('DOMContentLoaded', render);
+        })();
     </script>
 </body>
 </html>
