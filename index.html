@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Presión Arterial · Luanita</title>
+    <title>BP · Luanita Pro</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -14,7 +15,7 @@
         }
 
         body {
-            background: #f0f2f5;
+            background: #f5f7fa;
             min-height: 100vh;
             padding: 12px;
             display: flex;
@@ -24,7 +25,7 @@
 
         .app-container {
             width: 100%;
-            max-width: 480px;
+            max-width: 500px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
@@ -34,22 +35,20 @@
         .card {
             background: white;
             border-radius: 28px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,20,40,0.05);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.03);
             padding: 20px 18px;
             border: 1px solid rgba(0,0,0,0.02);
-            backdrop-filter: blur(2px);
-            transition: all 0.2s ease;
         }
 
         .header-card {
-            background: linear-gradient(145deg, #1a2e3f, #1f3a4b);
+            background: linear-gradient(145deg, #0b2a41, #12344d);
             color: white;
             padding: 24px 20px;
-            border-radius: 32px;
+            border-radius: 34px;
         }
 
         .header-card h1 {
-            font-size: 1.9rem;
+            font-size: 2rem;
             font-weight: 600;
             letter-spacing: -0.02em;
             line-height: 1.2;
@@ -59,50 +58,59 @@
             gap: 8px;
         }
 
-        .header-card p {
-            font-size: 1rem;
-            opacity: 0.8;
-            font-weight: 400;
-        }
-
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-bottom: 4px;
         }
 
         .stat-item {
             background: white;
             border-radius: 24px;
-            padding: 18px 12px;
+            padding: 16px 8px;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
             border: 1px solid rgba(0,0,0,0.02);
         }
 
         .stat-label {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 0.4px;
-            color: #64748b;
+            color: #5f6c80;
             font-weight: 500;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .stat-value {
-            font-size: 2.1rem;
+            font-size: 2rem;
             font-weight: 700;
-            color: #0b1e2c;
-            line-height: 1;
+            color: #102331;
+            line-height: 1.2;
         }
 
         .stat-value.danger {
-            color: #c2414a;
+            color: #b91c3c;
         }
 
-        .stat-value.neutral {
-            color: #2563eb;
+        .chart-container {
+            background: white;
+            border-radius: 28px;
+            padding: 16px 12px 8px 12px;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e2a3a;
+            margin-bottom: 12px;
+            padding-left: 6px;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+            max-height: 170px;
+            border-radius: 20px;
         }
 
         .form-card {
@@ -110,13 +118,20 @@
         }
 
         .form-title {
-            font-size: 1.35rem;
+            font-size: 1.3rem;
             font-weight: 600;
-            color: #0b1e2c;
-            margin-bottom: 20px;
+            color: #102331;
+            margin-bottom: 18px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+        }
+
+        .double-input {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
         }
 
         .input-group {
@@ -124,75 +139,72 @@
         }
 
         .input-label {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 500;
-            color: #334155;
+            color: #3c4b5c;
             margin-bottom: 6px;
             display: block;
-            padding-left: 6px;
+            padding-left: 8px;
         }
 
         .input-field {
             width: 100%;
-            padding: 18px 16px;
-            font-size: 1.1rem;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 24px;
-            background: #f8fafc;
-            transition: border 0.15s, background 0.15s;
+            padding: 16px 14px;
+            font-size: 1rem;
+            border: 1.5px solid #dee5ed;
+            border-radius: 26px;
+            background: #f9fcff;
+            transition: 0.15s;
             -webkit-appearance: none;
-            appearance: none;
         }
 
         .input-field:focus {
             outline: none;
             border-color: #2563eb;
             background: white;
-            box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
-        }
-
-        .double-input {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.08);
         }
 
         .btn {
             border: none;
-            border-radius: 32px;
-            padding: 18px 20px;
-            font-size: 1.2rem;
+            border-radius: 34px;
+            padding: 16px 18px;
+            font-size: 1.1rem;
             font-weight: 600;
             width: 100%;
             cursor: pointer;
-            transition: all 0.15s ease;
-            background: #e2e8f0;
-            color: #1e293b;
-            -webkit-appearance: none;
-            appearance: none;
+            background: #e3e9f2;
+            color: #1e2b3a;
             touch-action: manipulation;
+            margin-bottom: 8px;
         }
 
         .btn-primary {
-            background: #1e3a5f;
+            background: #12426b;
             color: white;
-            box-shadow: 0 8px 20px -8px #1e3a5f80;
+            box-shadow: 0 8px 20px -8px #12426b;
         }
 
         .btn-primary:active {
-            background: #143049;
+            background: #0b2f4d;
             transform: scale(0.98);
         }
 
-        .btn-danger {
-            background: #fee2e2;
-            color: #b91c1c;
+        .btn-excel {
+            background: #1f5e3a;
+            color: white;
             font-size: 1rem;
             padding: 14px;
+            margin-top: 8px;
         }
 
-        .btn-danger:active {
-            background: #fecaca;
+        .btn-excel:active {
+            background: #154b2d;
+        }
+
+        .btn-icon {
+            font-size: 1.2rem;
+            margin-right: 6px;
         }
 
         .table-container {
@@ -204,100 +216,86 @@
         }
 
         .table-scroll {
-            max-height: 420px;
+            max-height: 350px;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 360px;
+            min-width: 340px;
         }
 
         th {
-            background: #f8fafc;
-            color: #334155;
+            background: #f0f4fa;
+            color: #2c3e50;
             font-weight: 600;
-            font-size: 0.8rem;
-            padding: 16px 8px;
+            font-size: 0.75rem;
+            padding: 14px 4px;
             text-align: center;
             text-transform: uppercase;
             letter-spacing: 0.3px;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid #dde3ec;
             position: sticky;
             top: 0;
-            background: #f1f4f9;
             z-index: 10;
         }
 
         td {
-            padding: 16px 6px;
+            padding: 12px 4px;
             text-align: center;
-            border-bottom: 1px solid #edf2f7;
-            font-size: 0.95rem;
+            border-bottom: 1px solid #ecf1f7;
+            font-size: 0.9rem;
         }
 
-        tr:last-child td {
-            border-bottom: none;
+        .date-cell {
+            font-weight: 500;
+            line-height: 1.3;
+            white-space: nowrap;
+        }
+
+        .date-small {
+            font-size: 0.75rem;
+            color: #4b5a6e;
+            display: block;
         }
 
         .status-badge {
             display: inline-block;
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 40px;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-weight: 600;
-            min-width: 68px;
+            min-width: 60px;
         }
 
-        .status-normal {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .status-high {
-            background: #fee2e2;
-            color: #991b1b;
-        }
+        .status-normal { background: #e2f3e4; color: #1f6d2f; }
+        .status-high { background: #ffe5e5; color: #aa2020; }
 
         .delete-btn {
-            background: none;
+            background: #f0f4fa;
             border: none;
-            font-size: 1.4rem;
-            cursor: pointer;
-            padding: 8px 6px;
-            border-radius: 100px;
-            width: 44px;
-            height: 44px;
+            font-size: 1.2rem;
+            padding: 8px;
+            border-radius: 30px;
+            width: 38px;
+            height: 38px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background: #f1f5f9;
-            transition: background 0.1s;
             touch-action: manipulation;
         }
 
         .delete-btn:active {
-            background: #e2e8f0;
-        }
-
-        .empty-row td {
-            padding: 48px 16px;
-            color: #94a3b8;
-            font-size: 1rem;
-            text-align: center;
+            background: #e0e6f0;
         }
 
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(5px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -315,12 +313,11 @@
 
         .modal-content {
             background: white;
-            border-radius: 36px;
+            border-radius: 40px;
             padding: 32px 24px;
             max-width: 380px;
             width: 100%;
             text-align: center;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
             transform: scale(0.9);
             transition: 0.2s;
         }
@@ -329,97 +326,48 @@
             transform: scale(1);
         }
 
-        .modal-content h3 {
-            font-size: 1.8rem;
-            margin-bottom: 16px;
-            color: #1e293b;
-        }
-
-        .modal-content p {
-            font-size: 1.2rem;
-            color: #475569;
-            margin-bottom: 28px;
-        }
-
         .modal-buttons {
             display: flex;
-            gap: 12px;
+            gap: 10px;
+            margin-top: 20px;
         }
 
         .modal-btn {
             flex: 1;
-            padding: 16px 10px;
-            border-radius: 34px;
-            font-size: 1.2rem;
+            padding: 16px;
+            border-radius: 30px;
             font-weight: 600;
             border: none;
-            background: #f1f5f9;
-            color: #1e293b;
-            touch-action: manipulation;
+            background: #f0f4fa;
         }
 
         .modal-btn-danger {
-            background: #b91c1c;
+            background: #c62828;
             color: white;
-        }
-
-        .modal-btn-danger:active {
-            background: #991b1b;
-        }
-
-        .modal-btn-cancel:active {
-            background: #e2e8f0;
-        }
-
-        .note-mobile {
-            font-size: 0.9rem;
-            color: #64748b;
-            background: #f8fafc;
-            border-radius: 20px;
-            padding: 12px 16px;
-            margin-top: 16px;
-            border: 1px dashed #cbd5e1;
-            text-align: center;
-        }
-
-        .icon-small {
-            font-size: 1.4rem;
-            line-height: 1;
         }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <div class="header-card card">
-            <h1>
-                <span>❤️</span> Luanita
-            </h1>
-            <p>Control diario · estándares OMS</p>
+        <div class="header-card">
+            <h1>❤️ Luanita · PA</h1>
+            <p style="opacity:0.8;">última semana · tendencia OMS</p>
         </div>
 
         <div class="stats-grid">
-            <div class="stat-item">
-                <div class="stat-label">mediciones</div>
-                <div class="stat-value neutral" id="totalMeasurements">0</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">sistólica Ø</div>
-                <div class="stat-value" id="avgSystolic">0</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">diastólica Ø</div>
-                <div class="stat-value" id="avgDiastolic">0</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">alertas OMS</div>
-                <div class="stat-value danger" id="highCount">0</div>
-            </div>
+            <div class="stat-item"><div class="stat-label">totales</div><div class="stat-value" id="totalMeasurements">0</div></div>
+            <div class="stat-item"><div class="stat-label">sistólica Ø</div><div class="stat-value" id="avgSystolic">0</div></div>
+            <div class="stat-item"><div class="stat-label">diastólica Ø</div><div class="stat-value" id="avgDiastolic">0</div></div>
+            <div class="stat-item"><div class="stat-label">alertas OMS</div><div class="stat-value danger" id="highCount">0</div></div>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">📈 evolución semanal (sistólica)</div>
+            <canvas id="bpChart"></canvas>
         </div>
 
         <div class="form-card card">
-            <div class="form-title">
-                <span>➕</span> Registrar toma
-            </div>
+            <div class="form-title">➕ nueva medición</div>
             <div class="double-input">
                 <div class="input-group">
                     <label class="input-label">Sistólica</label>
@@ -431,30 +379,18 @@
                 </div>
             </div>
             <div class="input-group">
-                <label class="input-label">Nota (opcional)</label>
-                <input type="text" id="notes" class="input-field" placeholder="ej: reposo, estrés" autocomplete="off">
+                <label class="input-label">Nota</label>
+                <input type="text" id="notes" class="input-field" placeholder="ej: reposo, tarde" autocomplete="off">
             </div>
-            <button class="btn btn-primary" onclick="addReading()">Guardar medición</button>
-            <div class="note-mobile">
-                ⏱️ la hora se guarda automáticamente
-            </div>
+            <button class="btn btn-primary" onclick="addReading()">guardar</button>
+            <button class="btn btn-excel" onclick="exportToExcel()"><span class="btn-icon">📥</span> descargar Excel completo</button>
         </div>
 
         <div class="table-container">
             <div class="table-scroll">
                 <table>
-                    <thead>
-                        <tr>
-                            <th>hora</th>
-                            <th>sis</th>
-                            <th>dia</th>
-                            <th>estado</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody id="readingsTable">
-                        <tr class="empty-row"><td colspan="5">✨ sin registros aún</td></tr>
-                    </tbody>
+                    <thead><tr><th>fecha</th><th>hora</th><th>sis</th><th>dia</th><th>estado</th><th></th></tr></thead>
+                    <tbody id="readingsTable"><tr><td colspan="6" style="padding:40px;text-align:center;color:#8a9bb5;">✨ sin mediciones</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -462,93 +398,162 @@
 
     <div class="modal-overlay" id="confirmModal">
         <div class="modal-content">
-            <h3>🗑️</h3>
-            <p>¿Eliminar este registro?<br><strong>no se podrá recuperar</strong></p>
+            <h3 style="font-size:2.5rem;">🗑️</h3>
+            <p style="font-size:1.2rem;">¿eliminar registro?<br><span style="font-size:0.9rem; color:#b33;">no se recupera</span></p>
             <div class="modal-buttons">
-                <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Cancelar</button>
-                <button class="modal-btn modal-btn-danger" onclick="confirmDelete()">Eliminar</button>
+                <button class="modal-btn" onclick="closeModal()">cancelar</button>
+                <button class="modal-btn modal-btn-danger" onclick="confirmDelete()">eliminar</button>
             </div>
         </div>
     </div>
 
     <script>
-        (function(){
-            class BloodPressureStorage {
+        (function() {
+            // ----- almacenamiento profesional (infinito mientras no se borre manual) -----
+            const STORAGE_KEY = 'bp_luanita_pro_v2';
+
+            class BPStorage {
                 constructor() {
-                    this.STORAGE_KEY = 'bp_luanita';
                     this.readings = this.load();
                 }
                 load() {
                     try {
-                        return JSON.parse(localStorage.getItem(this.STORAGE_KEY)) || [];
+                        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
                     } catch {
                         return [];
                     }
                 }
                 save() {
-                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.readings));
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.readings));
                 }
                 add(r) {
                     this.readings.push(r);
                     this.save();
-                    return r;
                 }
                 delete(id) {
-                    const i = this.readings.findIndex(x => x.id === id);
-                    if (i !== -1) { this.readings.splice(i,1); this.save(); return true; }
+                    const idx = this.readings.findIndex(x => x.id === id);
+                    if (idx !== -1) { this.readings.splice(idx, 1); this.save(); return true; }
                     return false;
                 }
                 getAll() { return this.readings; }
-                stats() {
+                getStats() {
                     const r = this.readings;
-                    if (!r.length) return { total:0, avgSystolic:0, avgDiastolic:0, highCount:0 };
-                    let sumSis = 0, sumDia = 0, high = 0;
+                    if (!r.length) return { total:0, avgS:0, avgD:0, high:0 };
+                    let sumS=0, sumD=0, high=0;
                     for (let x of r) {
-                        sumSis += x.systolic;
-                        sumDia += x.diastolic;
+                        sumS += x.systolic;
+                        sumD += x.diastolic;
                         if (x.systolic >= 140 || x.diastolic >= 90) high++;
                     }
                     return {
                         total: r.length,
-                        avgSystolic: Math.round(sumSis/r.length),
-                        avgDiastolic: Math.round(sumDia/r.length),
-                        highCount: high
+                        avgS: Math.round(sumS/r.length),
+                        avgD: Math.round(sumD/r.length),
+                        high: high
                     };
                 }
                 isHigh(s,d) { return s >= 140 || d >= 90; }
-                status(s,d) {
-                    return this.isHigh(s,d) 
-                        ? { text:'ALTA', class:'status-high' } 
-                        : { text:'normal', class:'status-normal' };
+                getWeekReadings() {
+                    const now = new Date();
+                    const weekAgo = new Date(now.getTime() - 7*24*60*60*1000);
+                    return this.readings
+                        .filter(r => new Date(r.timestamp) >= weekAgo)
+                        .sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
                 }
             }
 
-            const storage = new BloodPressureStorage();
+            const storage = new BPStorage();
             let currentDeleteId = null;
             const modal = document.getElementById('confirmModal');
+            let chartInstance = null;
 
-            window.formatTime = function(iso) {
+            // formato fecha + hora (dos líneas)
+            window.formatDateHour = function(iso) {
                 try {
                     const d = new Date(iso);
-                    return d.toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit', hour12: false });
+                    const fecha = d.toLocaleDateString('es-ES', { day:'2-digit', month:'2-digit' });
+                    const hora = d.toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit', hour12: false });
+                    return `<span class="date-cell">${fecha}</span><span class="date-small">${hora}</span>`;
                 } catch {
-                    return '--:--';
+                    return '<span>--</span><span class="date-small">--:--</span>';
                 }
             };
+
+            // render tabla
+            function renderTable() {
+                const list = storage.getAll();
+                const tbody = document.getElementById('readingsTable');
+                if (!list.length) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="padding:40px;text-align:center;color:#8a9bb5;">✨ sin mediciones</td></tr>';
+                    return;
+                }
+                const sorted = [...list].sort((a,b)=> new Date(b.timestamp) - new Date(a.timestamp));
+                tbody.innerHTML = sorted.map(r => {
+                    const statusClass = storage.isHigh(r.systolic, r.diastolic) ? 'status-high' : 'status-normal';
+                    const statusText = storage.isHigh(r.systolic, r.diastolic) ? 'ALTA' : 'normal';
+                    return `<tr>
+                        <td>${window.formatDateHour(r.timestamp)}</td>
+                        <td style="font-size:0.9rem;">—</td>
+                        <td><strong>${r.systolic}</strong></td>
+                        <td><strong>${r.diastolic}</strong></td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td><button class="delete-btn" onclick="deleteReading('${r.id}')">🗑️</button></td>
+                    </tr>`;
+                }).join('');
+            }
+
+            // actualizar stats y gráfico
+            function refreshUI() {
+                const stats = storage.getStats();
+                document.getElementById('totalMeasurements').innerText = stats.total;
+                document.getElementById('avgSystolic').innerText = stats.avgS;
+                document.getElementById('avgDiastolic').innerText = stats.avgD;
+                document.getElementById('highCount').innerText = stats.high;
+
+                // gráfico semanal (sistólica)
+                const weekData = storage.getWeekReadings();
+                const labels = weekData.map(d => {
+                    const date = new Date(d.timestamp);
+                    return date.toLocaleDateString('es-ES', { weekday:'short', day:'numeric' }).replace('.','');
+                });
+                const values = weekData.map(d => d.systolic);
+
+                const ctx = document.getElementById('bpChart').getContext('2d');
+                if (chartInstance) chartInstance.destroy();
+
+                chartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'sistólica (mmHg)',
+                            data: values,
+                            borderColor: '#2563eb',
+                            backgroundColor: 'rgba(37,99,235,0.05)',
+                            tension: 0.2,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#12426b',
+                            borderWidth: 3,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: false, min: 80, max: 180, grid: { color: '#eef2f6' } } },
+                        layout: { padding: { top: 10, bottom: 10 } }
+                    }
+                });
+            }
 
             window.addReading = function() {
                 const sis = parseInt(document.getElementById('systolic').value);
                 const dia = parseInt(document.getElementById('diastolic').value);
                 const notes = document.getElementById('notes').value.trim() || '—';
 
-                if (isNaN(sis) || isNaN(dia)) {
-                    alert('Ingresa ambos valores');
-                    return;
-                }
-                if (sis < 70 || sis > 250 || dia < 40 || dia > 150) {
-                    alert('Valores fuera de rango (70-250 / 40-150)');
-                    return;
-                }
+                if (isNaN(sis) || isNaN(dia)) { alert('ingresa valores'); return; }
+                if (sis<70||sis>250||dia<40||dia>150) { alert('rango válido: sis 70-250, dia 40-150'); return; }
 
                 const reading = {
                     id: Date.now().toString(),
@@ -557,16 +562,13 @@
                     notes: notes,
                     timestamp: new Date().toISOString()
                 };
-
                 storage.add(reading);
                 document.getElementById('systolic').value = '';
                 document.getElementById('diastolic').value = '';
                 document.getElementById('notes').value = '';
-
-                render();
-                if (storage.isHigh(sis, dia)) {
-                    alert('🔴 ALERTA OMS: presión elevada');
-                }
+                renderTable();
+                refreshUI();
+                if (storage.isHigh(sis, dia)) alert('🔴 alerta OMS: presión elevada');
             };
 
             window.deleteReading = function(id) {
@@ -577,7 +579,8 @@
             window.confirmDelete = function() {
                 if (currentDeleteId) {
                     storage.delete(currentDeleteId);
-                    render();
+                    renderTable();
+                    refreshUI();
                     closeModal();
                 }
             };
@@ -587,37 +590,41 @@
                 currentDeleteId = null;
             };
 
-            function render() {
-                const list = storage.getAll();
-                const tbody = document.getElementById('readingsTable');
-                if (!list.length) {
-                    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">✨ sin registros aún</td></tr>';
-                } else {
-                    const sorted = [...list].sort((a,b)=> new Date(b.timestamp)-new Date(a.timestamp));
-                    tbody.innerHTML = sorted.map(r => {
-                        const st = storage.status(r.systolic, r.diastolic);
-                        return `<tr>
-                            <td style="font-weight:500;">${formatTime(r.timestamp)}</td>
-                            <td><strong>${r.systolic}</strong></td>
-                            <td><strong>${r.diastolic}</strong></td>
-                            <td><span class="status-badge ${st.class}">${st.text}</span></td>
-                            <td><button class="delete-btn" onclick="deleteReading('${r.id}')">🗑️</button></td>
-                        </tr>`;
-                    }).join('');
-                }
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
-                const s = storage.stats();
-                document.getElementById('totalMeasurements').innerText = s.total;
-                document.getElementById('avgSystolic').innerText = s.avgSystolic;
-                document.getElementById('avgDiastolic').innerText = s.avgDiastolic;
-                document.getElementById('highCount').innerText = s.highCount;
-            }
+            // exportar a excel (formato tabla completa)
+            window.exportToExcel = function() {
+                const readings = storage.getAll();
+                if (!readings.length) { alert('no hay datos para exportar'); return; }
 
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) closeModal();
+                const sorted = [...readings].sort((a,b)=> new Date(a.timestamp)-new Date(b.timestamp));
+                let csv = "Fecha,Hora,Sistólica,Diastólica,Notas,Estado OMS\n";
+
+                sorted.forEach(r => {
+                    const d = new Date(r.timestamp);
+                    const fecha = d.toLocaleDateString('es-ES');
+                    const hora = d.toLocaleTimeString('es-ES', { hour12: false });
+                    const estado = (r.systolic >= 140 || r.diastolic >= 90) ? 'ALTA' : 'normal';
+                    const nota = r.notes.replace(/,/g, ';'); // evitar conflictos csv
+                    csv += `${fecha},${hora},${r.systolic},${r.diastolic},"${nota}",${estado}\n`;
+                });
+
+                const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' }); // BOM para español
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'presion_luanita_completa.csv');
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            };
+
+            document.addEventListener('DOMContentLoaded', () => {
+                renderTable();
+                refreshUI();
             });
-
-            document.addEventListener('DOMContentLoaded', render);
         })();
     </script>
 </body>
